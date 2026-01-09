@@ -30,11 +30,14 @@ class _MealListScreenState extends State<MealListScreen>
   SortOrder sortOrder = SortOrder.az;
   Timer? _debounce;
 
-  @override
-  void initState() {
-    super.initState();
+ @override
+void initState() {
+  super.initState();
+
+  Future.delayed(const Duration(milliseconds: 600), () {
     context.read<MealsBloc>().add(const FetchAllMeals());
-  }
+  });
+}
 
   @override
   void dispose() {

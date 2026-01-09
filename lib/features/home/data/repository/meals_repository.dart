@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meal_app/config/api/api_services.dart';
 import 'package:meal_app/config/local/sql_database.dart';
@@ -16,8 +17,18 @@ class MealsRepository {
 
   MealsRepository(this._apiServices);
 
+
 Future<ApiListResponse<MealModel>> fetchAllMeals() async {
   try {
+    final connectivityResult =
+        await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      return ApiListResponse.error(
+       
+      );
+    }
+
     final json = await _apiServices.getRequest('/search.php?s=');
 
     if (json != null && json['meals'] != null) {
@@ -32,11 +43,19 @@ Future<ApiListResponse<MealModel>> fetchAllMeals() async {
       );
     }
 
-    return ApiListResponse.error();
-  } catch (e) {
-    return ApiListResponse.error();
+    return ApiListResponse.error(
+      
+    );
+  } catch (e, s) {
+    debugPrint("Fetch meals error: $e");
+    debugPrintStack(stackTrace: s);
+
+    return ApiListResponse.error(
+    
+    );
   }
 }
+
 
 
 Future<MealDetailModel?> fetchMealDetail(String id) async {
